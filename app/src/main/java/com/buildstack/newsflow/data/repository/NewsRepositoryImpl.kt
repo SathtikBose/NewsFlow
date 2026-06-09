@@ -9,9 +9,9 @@ class NewsRepositoryImpl @Inject constructor(
     private val apiService: NewsApiService
 ) : NewsRepository {
 
-    override suspend fun getTopHeadlines(): Result<List<Article>> {
+    override suspend fun getTopHeadlines(page: Int, pageSize: Int): Result<List<Article>> {
         return try {
-            val response = apiService.getTopHeadlines()
+            val response = apiService.getTopHeadlines(page = page, pageSize = pageSize)
             val articles = response.articles.map { dto ->
                 Article(
                     title = dto.title ?: "",

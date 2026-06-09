@@ -7,7 +7,7 @@ import javax.inject.Inject
 class GetTopHeadlinesUseCase @Inject constructor(
     private val repository: NewsRepository
 ) {
-    suspend operator fun invoke(): Result<List<Article>> {
-        return repository.getTopHeadlines()
+    suspend operator fun invoke(page: Int = 1, pageSize: Int = 20): Result<List<Article>> {
+        return repository.getTopHeadlines(page, pageSize)
     }
 }
