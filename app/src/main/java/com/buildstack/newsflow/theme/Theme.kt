@@ -40,6 +40,7 @@ private val LightColorScheme = lightColorScheme(
 @Composable
 fun NewsFlowTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
+    fontScale: Float = 1.0f,
     // Dynamic color is available on Android 12+
     dynamicColor: Boolean = true,
     content: @Composable () -> Unit
@@ -62,9 +63,19 @@ fun NewsFlowTheme(
         }
     }
 
-    MaterialTheme(
-        colorScheme = colorScheme,
-        typography = Typography,
-        content = content
+    val currentDensity = androidx.compose.ui.platform.LocalDensity.current
+    val customDensity = androidx.compose.ui.unit.Density(
+        density = currentDensity.density,
+        fontScale = currentDensity.fontScale * fontScale
     )
+
+    androidx.compose.runtime.CompositionLocalProvider(
+        androidx.compose.ui.platform.LocalDensity provides customDensity
+    ) {
+        MaterialTheme(
+            colorScheme = colorScheme,
+            typography = Typography,
+            content = content
+        )
+    }
 }

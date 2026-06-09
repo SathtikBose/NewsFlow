@@ -17,7 +17,7 @@ abstract class RepositoryModule {
     ): NewsRepository
 
     @Binds
-    abstract fun bindBookmarksRepository(
-        bookmarksRepositoryImpl: com.buildstack.newsflow.data.repository.BookmarksRepositoryImpl
-    ): com.buildstack.newsflow.domain.repository.BookmarksRepository
+    abstract fun bindSettingsRepository(
+        settingsRepositoryImpl: com.buildstack.newsflow.data.repository.SettingsRepositoryImpl
+    ): com.buildstack.newsflow.domain.repository.SettingsRepository
 }

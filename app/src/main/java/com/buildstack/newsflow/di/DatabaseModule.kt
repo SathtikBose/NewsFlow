@@ -32,7 +32,7 @@ object DatabaseModule {
 
     @Provides
     @Singleton
-    fun provideBookmarkDao(db: NewsDatabase): com.buildstack.newsflow.data.local.BookmarkDao {
-        return db.bookmarkDao
+    fun provideSettingsDao(db: NewsDatabase): com.buildstack.newsflow.data.local.SettingsDao {
+        return db.settingsDao
     }
 }

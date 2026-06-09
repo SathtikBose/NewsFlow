@@ -19,8 +19,8 @@ fun Modifier.glass(
     .background(
         brush = Brush.linearGradient(
             colors = listOf(
-                Color.White.copy(alpha = 0.2f),
-                Color.White.copy(alpha = 0.05f)
+                Color.Black.copy(alpha = 0.6f),
+                Color.Black.copy(alpha = 0.3f)
             )
         )
     )
@@ -28,7 +28,7 @@ fun Modifier.glass(
         width = borderWidth,
         brush = Brush.linearGradient(
             colors = listOf(
-                Color.White.copy(alpha = 0.4f),
+                Color.White.copy(alpha = 0.5f),
                 Color.White.copy(alpha = 0.1f)
             )
         ),

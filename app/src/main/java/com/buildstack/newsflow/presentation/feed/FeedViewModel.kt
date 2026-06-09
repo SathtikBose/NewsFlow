@@ -62,4 +62,9 @@ class FeedViewModel @Inject constructor(
             }
         }
     }
+
+    fun refresh() {
+        _uiState.update { FeedUiState() }
+        loadFeed()
+    }
 }

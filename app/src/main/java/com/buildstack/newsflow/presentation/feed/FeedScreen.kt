@@ -24,6 +24,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -43,8 +45,10 @@ import coil.request.ImageRequest
 import com.buildstack.newsflow.domain.models.Article
 import com.buildstack.newsflow.ui.components.glass
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FeedScreen(
+    refreshCounter: Int = 0,
     viewModel: FeedViewModel = hiltViewModel(),
     onArticleClick: (com.buildstack.newsflow.domain.models.Article) -> Unit = {}
 ) {
@@ -58,7 +62,18 @@ fun FeedScreen(
         }
     }
 
-    Box(modifier = Modifier.fillMaxSize().background(Color.Black)) {
+    LaunchedEffect(refreshCounter) {
+        if (refreshCounter > 0) {
+            viewModel.refresh()
+            pagerState.animateScrollToPage(0)
+        }
+    }
+
+    PullToRefreshBox(
+        isRefreshing = uiState.isLoading && uiState.articles.isNotEmpty(),
+        onRefresh = { viewModel.refresh() },
+        modifier = Modifier.fillMaxSize().background(Color.Black)
+    ) {
         if (uiState.articles.isEmpty() && uiState.isLoading) {
             CircularProgressIndicator(
                 modifier = Modifier.align(Alignment.Center),

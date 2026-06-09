@@ -9,6 +9,8 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,8 +27,10 @@ import coil.compose.AsyncImage
 import com.buildstack.newsflow.domain.models.Article
 import com.buildstack.newsflow.ui.components.glass
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopHeadlinesScreen(
+    refreshCounter: Int = 0,
     viewModel: TopHeadlinesViewModel = hiltViewModel(),
     onArticleClick: (com.buildstack.newsflow.domain.models.Article) -> Unit = {}
 ) {
@@ -43,7 +47,16 @@ fun TopHeadlinesScreen(
             }
     }
 
-    Box(
+    LaunchedEffect(refreshCounter) {
+        if (refreshCounter > 0) {
+            viewModel.refresh()
+            listState.animateScrollToItem(0)
+        }
+    }
+
+    PullToRefreshBox(
+        isRefreshing = uiState.isLoading && uiState.articles.isNotEmpty(),
+        onRefresh = { viewModel.refresh() },
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)

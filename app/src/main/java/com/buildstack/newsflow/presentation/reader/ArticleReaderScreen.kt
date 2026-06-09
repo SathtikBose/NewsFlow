@@ -29,8 +29,6 @@ import com.buildstack.newsflow.ui.components.glass
 
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.FavoriteBorder
 
 @Composable
 fun ArticleReaderScreen(
@@ -39,7 +37,6 @@ fun ArticleReaderScreen(
     viewModel: ArticleReaderViewModel = hiltViewModel()
 ) {
     var progress by remember { mutableFloatStateOf(0f) }
-    val isBookmarked by viewModel.isBookmarked.collectAsStateWithLifecycle()
     val url = viewModel.url
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -89,22 +86,5 @@ fun ArticleReaderScreen(
             )
         }
         
-        // Glassmorphism Bookmark Button
-        IconButton(
-            onClick = { viewModel.toggleBookmark(viewModel.article) },
-            modifier = Modifier
-                .statusBarsPadding()
-                .padding(16.dp)
-                .size(48.dp)
-                .clip(CircleShape)
-                .glass(shape = CircleShape)
-                .align(Alignment.TopEnd)
-        ) {
-            Icon(
-                imageVector = if (isBookmarked) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
-                contentDescription = "Bookmark",
-                tint = if (isBookmarked) Color.Red else Color.Black
-            )
-        }
     }
 }

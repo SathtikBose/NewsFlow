@@ -60,4 +60,9 @@ class TopHeadlinesViewModel @Inject constructor(
             }
         }
     }
+
+    fun refresh() {
+        _uiState.update { TopHeadlinesUiState() }
+        loadHeadlines()
+    }
 }
