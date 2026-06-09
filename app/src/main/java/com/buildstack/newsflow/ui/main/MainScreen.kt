@@ -45,6 +45,7 @@ fun MainScreen() {
         androidx.compose.foundation.layout.Box(modifier = Modifier.padding(innerPadding)) {
             when (selectedItem) {
                 0 -> TopHeadlinesScreen()
+                1 -> com.buildstack.newsflow.presentation.search.SearchScreen()
                 else -> {
                     // Placeholders for other phases
                     androidx.compose.foundation.layout.Box(

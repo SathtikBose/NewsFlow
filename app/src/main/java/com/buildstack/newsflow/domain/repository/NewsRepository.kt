@@ -4,4 +4,5 @@ import com.buildstack.newsflow.domain.models.Article
 
 interface NewsRepository {
     suspend fun getTopHeadlines(page: Int = 1, pageSize: Int = 20): Result<List<Article>>
+    suspend fun searchArticles(query: String, page: Int, pageSize: Int): Result<List<Article>>
 }

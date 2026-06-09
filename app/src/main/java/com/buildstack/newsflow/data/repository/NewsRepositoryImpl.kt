@@ -28,4 +28,24 @@ class NewsRepositoryImpl @Inject constructor(
             Result.failure(e)
         }
     }
+
+    override suspend fun searchArticles(query: String, page: Int, pageSize: Int): Result<List<Article>> {
+        return try {
+            val response = apiService.searchEverything(query = query, page = page, pageSize = pageSize)
+            val articles = response.articles.map { dto ->
+                Article(
+                    title = dto.title ?: "",
+                    description = dto.description ?: "",
+                    sourceName = dto.source?.name ?: "",
+                    urlToImage = dto.urlToImage ?: "",
+                    url = dto.url ?: "",
+                    publishedAt = dto.publishedAt ?: "",
+                    content = dto.content ?: ""
+                )
+            }.filter { it.title.isNotBlank() && it.title != "[Removed]" }
+            Result.success(articles)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 }
