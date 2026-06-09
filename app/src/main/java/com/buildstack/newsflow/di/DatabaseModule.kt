@@ -21,12 +21,18 @@ object DatabaseModule {
             app,
             NewsDatabase::class.java,
             "news_db"
-        ).build()
+        ).fallbackToDestructiveMigration().build()
     }
 
     @Provides
     @Singleton
     fun provideSearchHistoryDao(db: NewsDatabase): SearchHistoryDao {
         return db.searchHistoryDao
+    }
+
+    @Provides
+    @Singleton
+    fun provideBookmarkDao(db: NewsDatabase): com.buildstack.newsflow.data.local.BookmarkDao {
+        return db.bookmarkDao
     }
 }

@@ -7,6 +7,7 @@ import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -22,10 +23,12 @@ import com.buildstack.newsflow.presentation.feed.FeedScreen
 import com.buildstack.newsflow.presentation.headlines.TopHeadlinesScreen
 
 @Composable
-fun MainScreen() {
+fun MainScreen(
+    onArticleClick: (com.buildstack.newsflow.domain.models.Article) -> Unit
+) {
     var selectedItem by remember { mutableStateOf(0) }
-    val items = listOf("Headlines", "Search", "Feed", "Settings")
-    val icons = listOf(Icons.Filled.Home, Icons.Filled.Search, Icons.AutoMirrored.Filled.List, Icons.Filled.Settings)
+    val items = listOf("Headlines", "Search", "Feed", "Bookmarks", "Settings")
+    val icons = listOf(Icons.Filled.Home, Icons.Filled.Search, Icons.AutoMirrored.Filled.List, Icons.Filled.Favorite, Icons.Filled.Settings)
 
     Scaffold(
         bottomBar = {
@@ -44,9 +47,10 @@ fun MainScreen() {
         // We will swap screens based on selectedItem later.
         androidx.compose.foundation.layout.Box(modifier = Modifier.padding(innerPadding)) {
             when (selectedItem) {
-                0 -> TopHeadlinesScreen()
-                1 -> com.buildstack.newsflow.presentation.search.SearchScreen()
-                2 -> FeedScreen()
+                0 -> TopHeadlinesScreen(onArticleClick = onArticleClick)
+                1 -> com.buildstack.newsflow.presentation.search.SearchScreen(onArticleClick = onArticleClick)
+                2 -> FeedScreen(onArticleClick = onArticleClick)
+                3 -> com.buildstack.newsflow.presentation.bookmarks.BookmarksScreen(onArticleClick = onArticleClick)
                 else -> {
                     // Placeholders for other phases
                     androidx.compose.foundation.layout.Box(

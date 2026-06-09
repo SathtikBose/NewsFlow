@@ -2,6 +2,7 @@ package com.buildstack.newsflow.presentation.feed
 
 import android.content.Intent
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,6 +22,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -42,7 +45,8 @@ import com.buildstack.newsflow.ui.components.glass
 
 @Composable
 fun FeedScreen(
-    viewModel: FeedViewModel = hiltViewModel()
+    viewModel: FeedViewModel = hiltViewModel(),
+    onArticleClick: (com.buildstack.newsflow.domain.models.Article) -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val pagerState = rememberPagerState(pageCount = { uiState.articles.size })
@@ -72,7 +76,7 @@ fun FeedScreen(
                 modifier = Modifier.fillMaxSize()
             ) { page ->
                 val article = uiState.articles[page]
-                FeedItem(article = article)
+                FeedItem(article = article, onClick = { onArticleClick(article) })
             }
             
             // Loading indicator at the bottom if fetching more
@@ -91,10 +95,10 @@ fun FeedScreen(
 }
 
 @Composable
-fun FeedItem(article: Article) {
+fun FeedItem(article: Article, onClick: () -> Unit = {}) {
     val context = LocalContext.current
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(modifier = Modifier.fillMaxSize().clickable { onClick() }) {
         // Full screen background image
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
@@ -155,14 +159,14 @@ fun FeedItem(article: Article) {
                 Spacer(modifier = Modifier.height(8.dp))
                 
                 // Description
-                if (article.description.isNotBlank()) {
-                    Text(
-                        text = article.description,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = Color.White.copy(alpha = 0.8f),
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis
-                    )
+                Button(
+                    onClick = { onClick() },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.8f)
+                    ),
+                    shape = CircleShape
+                ) {
+                    Text("Read Full Article")
                 }
             }
             

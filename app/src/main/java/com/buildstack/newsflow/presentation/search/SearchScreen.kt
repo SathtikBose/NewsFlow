@@ -20,12 +20,12 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.buildstack.newsflow.presentation.headlines.ArticleGlassCard
-import com.buildstack.newsflow.ui.components.glass
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchScreen(
-    viewModel: SearchViewModel = hiltViewModel()
+    viewModel: SearchViewModel = hiltViewModel(),
+    onArticleClick: (com.buildstack.newsflow.domain.models.Article) -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -33,32 +33,38 @@ fun SearchScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
-            .padding(16.dp)
     ) {
-        // Search Bar
+        // Search Bar with debouncing
         SearchBar(
-            query = uiState.query,
-            onQueryChange = viewModel::onQueryChange,
-            onSearch = { /* Handled by debounce */ },
-            active = false,
-            onActiveChange = { },
-            placeholder = { Text("Search news...") },
-            leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
-            trailingIcon = {
-                if (uiState.query.isNotEmpty()) {
-                    IconButton(onClick = { viewModel.onQueryChange("") }) {
-                        Icon(Icons.Default.Clear, contentDescription = "Clear")
+            inputField = {
+                SearchBarDefaults.InputField(
+                    query = uiState.query,
+                    onQueryChange = { viewModel.onQueryChange(it) },
+                    onSearch = { 
+                        // Search handled via debounce in ViewModel or explicitly via Search history click
+                        viewModel.onQueryChange(it) 
+                    },
+                    expanded = false,
+                    onExpandedChange = { },
+                    placeholder = { Text("Search news...") },
+                    leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Search Icon") },
+                    trailingIcon = {
+                        if (uiState.query.isNotEmpty()) {
+                            IconButton(onClick = { viewModel.onQueryChange("") }) {
+                                Icon(Icons.Default.Clear, contentDescription = "Clear")
+                            }
+                        }
                     }
-                }
+                )
             },
+            expanded = false,
+            onExpandedChange = { },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 16.dp),
-            colors = SearchBarDefaults.colors(
-                containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
-            )
+                .padding(16.dp)
         ) {}
 
+        // Results
         if (uiState.isLoading) {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator()
@@ -73,7 +79,7 @@ fun SearchScreen(
                 modifier = Modifier.fillMaxSize()
             ) {
                 items(uiState.articles) { article ->
-                    ArticleGlassCard(article = article)
+                    ArticleGlassCard(article = article, onClick = { onArticleClick(article) })
                 }
             }
         } else if (uiState.isSearchActive && uiState.query.isNotEmpty()) {
@@ -84,7 +90,7 @@ fun SearchScreen(
             // Show History
             if (uiState.history.isNotEmpty()) {
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -99,6 +105,7 @@ fun SearchScreen(
                 }
                 
                 LazyColumn(
+                    modifier = Modifier.padding(horizontal = 16.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     items(uiState.history) { historyItem ->

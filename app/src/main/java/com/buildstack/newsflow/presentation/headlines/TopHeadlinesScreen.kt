@@ -1,6 +1,7 @@
 package com.buildstack.newsflow.presentation.headlines
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -26,7 +27,8 @@ import com.buildstack.newsflow.ui.components.glass
 
 @Composable
 fun TopHeadlinesScreen(
-    viewModel: TopHeadlinesViewModel = hiltViewModel()
+    viewModel: TopHeadlinesViewModel = hiltViewModel(),
+    onArticleClick: (com.buildstack.newsflow.domain.models.Article) -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val listState = rememberLazyListState()
@@ -64,7 +66,7 @@ fun TopHeadlinesScreen(
             }
 
             itemsIndexed(uiState.articles) { index, article ->
-                ArticleGlassCard(article = article)
+                ArticleGlassCard(article = article, onClick = { onArticleClick(article) })
             }
 
             if (uiState.isLoading) {
@@ -94,13 +96,14 @@ fun TopHeadlinesScreen(
 }
 
 @Composable
-fun ArticleGlassCard(article: Article) {
+fun ArticleGlassCard(article: Article, onClick: () -> Unit = {}) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .height(320.dp)
             .clip(MaterialTheme.shapes.large)
             .background(Color.DarkGray)
+            .clickable { onClick() }
     ) {
         AsyncImage(
             model = article.urlToImage,

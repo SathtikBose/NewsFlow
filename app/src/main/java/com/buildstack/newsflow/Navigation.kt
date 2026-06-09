@@ -22,7 +22,24 @@ fun MainNavigation() {
       )
     }
     composable("main") {
-      MainScreen()
+      MainScreen(
+          onArticleClick = { article ->
+              val json = kotlinx.serialization.json.Json.encodeToString(com.buildstack.newsflow.domain.models.Article.serializer(), article)
+              val encodedJson = java.net.URLEncoder.encode(json, "UTF-8")
+              navController.navigate("article_reader/$encodedJson")
+          }
+      )
+    }
+    composable(
+        route = "article_reader/{articleJson}",
+        arguments = listOf(androidx.navigation.navArgument("articleJson") { type = androidx.navigation.NavType.StringType })
+    ) { backStackEntry ->
+        val encodedJson = backStackEntry.arguments?.getString("articleJson") ?: ""
+        val decodedJson = java.net.URLDecoder.decode(encodedJson, "UTF-8")
+        com.buildstack.newsflow.presentation.reader.ArticleReaderScreen(
+            articleJson = decodedJson,
+            onBackClick = { navController.popBackStack() }
+        )
     }
   }
 }
